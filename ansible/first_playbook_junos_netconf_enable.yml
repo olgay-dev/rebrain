@@ -1,0 +1,12 @@
+---
+
+- name: Network Getting Started First Playbook
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: junipers
+  tasks:
+
+    - name: Enable NETCONF
+      junipernetworks.junos.junos_netconf:
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+

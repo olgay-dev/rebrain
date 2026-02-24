@@ -1,0 +1,29 @@
+---
+
+- name: Network Getting Started First Playbook
+  connection: ansible.netcommon.netconf
+  gather_facts: false
+  hosts: junipers
+  tasks:
+
+    - name: Get config for JunOS devices
+      junipernetworks.junos.junos_facts:
+        gather_subset: min
+
+    - name: Display the config
+      debug:
+        msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
+
+    - name: Backup current switch config (junos)
+      junipernetworks.junos.junos_config:
+        backup: yes
+        backup_options:
+          filename: "{{ ansible_net_hostname }}.cfg"
+          backup_format: json
+      register: backup_output
+      when: ansible_network_os == 'junipernetworks.junos.junos'
+
+    - name: Show backup result
+      debug:
+        var: backup_output
+
