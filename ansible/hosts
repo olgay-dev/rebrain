@@ -1,0 +1,19 @@
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[workstations]
+localhost ansible_connection=local
+
+[ciscos]
+sw ansible_host=192.168.1.60
+sw ansible_user=admin
+
+[ciscos:vars]
+ansible_network_os=cisco.ios.ios
+
+[junipers]
+jun ansible_host=192.168.1.73
+jun ansible_user=admin
+
+[junipers:vars]
+ansible_network_os=junipernetworks.junos.junos
