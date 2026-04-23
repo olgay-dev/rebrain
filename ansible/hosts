@@ -1,15 +1,26 @@
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
+cam_switches="['sw-2']"
 
 [workstations]
 localhost ansible_connection=local
 
-[ciscos]
+[ciscos_core]
 sw ansible_host=192.168.1.60
-sw ansible_user=admin
+
+[ciscos_access]
+sw-1 ansible_host=192.168.1.68
+sw-1 uplink_port=GigabitEthernet0/0 lan_ports="['GigabitEthernet0/1', 'GigabitEthernet0/2']"
+
+[ciscos:children]
+ciscos_core
+ciscos_access
 
 [ciscos:vars]
 ansible_network_os=cisco.ios.ios
+ansible_user=admin
+ansible_become=yes
+ansible_become_method=enable
 
 [junipers]
 jun ansible_host=192.168.1.73
@@ -17,3 +28,7 @@ jun ansible_user=admin
 
 [junipers:vars]
 ansible_network_os=junipernetworks.junos.junos
+
+[dlinks]
+sw-2 ansible_host=192.168.1.253
+sw-2 uplink_port=9 lan_ports=1-7 cam_ports=8
