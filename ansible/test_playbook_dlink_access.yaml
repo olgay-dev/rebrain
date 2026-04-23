@@ -1,0 +1,42 @@
+---
+
+- name: Test playbook for ansible.netcommon.telnet
+  hosts: dlinks
+  gather_facts: false
+
+  tasks:
+    - name: Execute telnet command
+      ansible.netcommon.telnet:
+        login_prompt: "UserName:"
+        password_prompt: "PassWord:"
+        prompts:
+          - "[#]"
+        command:
+          - "disable clipaging"
+          - "config command_prompt {{ inventory_hostname }}"
+          - "create vlan lan tag {{ inventory_hostname.split('-')[-1]|int + 100 }}"
+          - "config vlan lan add tagged {{ uplink_port }}"
+          - "config vlan lan add untagged {{ lan_ports }}"
+      register: telnet_output
+
+    - name: Display telnet output
+      debug:
+        var: telnet_output.stdout_lines
+
+    - name: Execute telnet command for cam
+      ansible.netcommon.telnet:
+        login_prompt: "UserName:"
+        password_prompt: "PassWord:"
+        prompts:
+          - "[#]"
+        command:
+          - "create vlan videovlan tag 50"
+          - "config vlan videovlan add tagged {{ uplink_port }}"
+          - "config vlan videovlan add untagged {{ cam_ports }}"
+      register: telnet_output
+      when: inventory_hostname in cam_switches
+
+    - name: Display telnet output
+      debug:
+        var: telnet_output.stdout_lines
+      when: inventory_hostname in cam_switches
