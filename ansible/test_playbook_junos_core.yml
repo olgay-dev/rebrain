@@ -1,0 +1,28 @@
+---
+
+- name: Network Getting Started First Playbook
+  connection: ansible.netcommon.netconf
+  gather_facts: false
+  hosts: junipers
+  tasks:
+
+    - name: Merge provided configuration with device configuration
+      junipernetworks.junos.junos_l3_interfaces:
+        config:
+          - name: lo0
+            ipv4:
+              - address: 172.16.100.1/24
+        state: merged
+
+    - name: Merge provided OSPFv2 configuration into running config.
+      junipernetworks.junos.junos_ospfv2:
+        config:
+          - areas:
+              - area_id: 0.0.0.0
+                area_ranges:
+                interfaces:
+                  - name: lo0.0
+                    passive: true
+                  - name: fxp0.0
+        state: merged
+

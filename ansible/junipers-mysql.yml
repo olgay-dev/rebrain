@@ -1,0 +1,15 @@
+#   Required columns: 
+#   'inventory_group', 'inventory_hostname'
+#
+#   TLDR:
+#   Besides the required columns, each column will be assigned 
+#   as an ansible hostvar dynamically.
+
+plugin: mysql-dynamic-inventory
+db_host: 127.0.0.1
+db_user: rebrainme
+db_pass: test
+db_name: test
+db_query: |
+  SELECT management_ip as ansible_host, sysname as inventory_hostname, 'junipers' as inventory_group from device where vendor="Juniper";
+

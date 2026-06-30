@@ -1,0 +1,51 @@
+---
+
+- name: Network Getting Started First Playbook
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: ciscos_aggr
+  tasks:
+
+    - name: Merge provided L3 iface configuration with device configuration
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: Loopback1
+            ipv4:
+              - address: 192.168.100.1/24
+        state: merged
+
+    - name: Configure Vlan interface settings
+      cisco.ios.ios_config:
+        lines:
+          - ip unnumbered Loopback1
+          - no ip redirects
+          - no ip proxy-arp
+          - no shutdown
+        parents: "interface Vlan {{ item }}"
+      loop: "{{ range(101, 103) }}"
+
+    - name: Merge provided OSPF V2 configuration
+      cisco.ios.ios_ospfv2:
+        config:
+          processes:
+            - process_id: 1
+              network:
+                - address: 192.168.1.0
+                  wildcard_bits: 0.0.0.255
+                  area: 0
+                - address: 192.168.100.0
+                  wildcard_bits: 0.0.0.255
+                  area: 0
+              passive_interfaces:
+                default: true
+                interface:
+                  set_interface: false
+                  name:
+                    - GigabitEthernet0/3
+        state: overridden
+      register: res
+
+    - name: Display res
+      debug:
+        var: res      
+
