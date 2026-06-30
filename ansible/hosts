@@ -8,12 +8,16 @@ localhost ansible_connection=local
 [ciscos_core]
 sw ansible_host=192.168.1.60
 
+[ciscos_aggr]
+sw-aggr ansible_host=192.168.1.68
+
 [ciscos_access]
-sw-1 ansible_host=192.168.1.68
+sw-1 ansible_host=192.168.1.67
 sw-1 uplink_port=GigabitEthernet0/0 lan_ports="['GigabitEthernet0/1', 'GigabitEthernet0/2']"
 
 [ciscos:children]
 ciscos_core
+ciscos_aggr
 ciscos_access
 
 [ciscos:vars]
